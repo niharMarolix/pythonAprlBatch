@@ -13,6 +13,8 @@ SECRET_KEY = 'django-insecure-^g^x#2t(go0#w*g^v+4(at^juz!1#$*r&__8qzpn4+&9#%ghq0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+AUTH_USER_MODEL = "tmFunctionalities.User"
+
 ALLOWED_HOSTS = []
 
 
@@ -61,11 +63,14 @@ WSGI_APPLICATION = 'taskManagement.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'taskManagement',
+        'USER': 'devuser',
+        'PASSWORD': 'Devuser#123',
+        "HOST":'216.48.191.120',
+        "PORT":'5432'
     }
 }
 

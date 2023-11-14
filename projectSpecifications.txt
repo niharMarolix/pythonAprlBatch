@@ -1,7 +1,7 @@
 what we need to do?
 
 Before MVP (minimum viable product):
-User management
+User management - partialy completed
 Create a board
 create cards
 assign cards
