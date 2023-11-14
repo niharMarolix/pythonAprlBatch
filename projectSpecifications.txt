@@ -1,0 +1,14 @@
+what we need to do?
+
+Before MVP (minimum viable product):
+User management
+Create a board
+create cards
+assign cards
+I can assign due date and start date
+I can add to do list for the particular card(CRUD)
+card statuses - toDo, currently doing, completed
+
+
+After MVP (minimum viable product):
+upload photos to describe the card
