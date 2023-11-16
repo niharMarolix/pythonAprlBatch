@@ -1,4 +1,5 @@
 from pathlib import Path
+import psycopg2
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -8,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-^g^x#2t(go0#w*g^v+4(at^juz!1#$*r&__8qzpn4+&9#%ghq0'
+SECRET_KEY = 'django-insecure-sco3@glbm7zbpb=y48pd$8g8+i*y&51qb$&_&)gp8a2w8dfitq'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -63,14 +64,15 @@ WSGI_APPLICATION = 'taskManagement.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'taskManagement',
         'USER': 'devuser',
         'PASSWORD': 'Devuser#123',
-        "HOST":'216.48.191.120',
-        "PORT":'5432'
+        'HOST': '216.48.191.120',
+        'PORT': '5432',
     }
 }
 
@@ -115,3 +117,16 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# Host for sending e-mail.
+EMAIL_HOST = 'smtp.elasticemail.com'
+
+# Port for sending e-mail.
+EMAIL_PORT = 2525
+
+# Optional SMTP authentication information for EMAIL_HOST.
+EMAIL_HOST_USER = 'kc234.marolix@gmail.com'
+EMAIL_HOST_PASSWORD = 'B1EC835D528E67C8D73E971C1028500BD945'
+EMAIL_USE_TLS = False
