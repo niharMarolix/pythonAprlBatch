@@ -130,3 +130,9 @@ EMAIL_PORT = 2525
 EMAIL_HOST_USER = 'kc234.marolix@gmail.com'
 EMAIL_HOST_PASSWORD = 'B1EC835D528E67C8D73E971C1028500BD945'
 EMAIL_USE_TLS = False
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}

@@ -87,3 +87,60 @@ def login(request):
         return JsonResponse({
             "error": "Invalid JSON in request body."
         }, status=status.HTTP_400_BAD_REQUEST)
+        
+        
+# @csrf_exempt
+# @api_view(['POST'])
+# @permission_classes([permissions.IsAuthenticated])
+# def createBoard(request):
+#     user=request.user
+#     boardName= (json.loads(request.body))["bname"]
+#     description=(json.loads(request.body))["desc"]
+#     if boardName and description:
+#         newBoard=Boards.objects.create(boardName=boardName,description=description,user=user)
+#         return JsonResponse({
+#             "boardId":newBoard.id,
+#             "message":"board created sucessfully"
+#         })
+        
+        
+        
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def createBoard(request):
+    try:
+        if request.user=="":
+            raise Exception("user is not signed in")
+        else:
+            user=request.user
+            try:
+                boardName= (json.loads(request.body))["bname"]
+                description=(json.loads(request.body))["desc"]
+                if boardName == "" or description =="":
+                    raise Exception("Board name and des not provided check once")
+                checkBoardname = Boards.objects.filter(boardName=boardName).exists()
+                if checkBoardname == True:
+                    raise Exception("Author alredy added to the database")
+                else:
+                    boardName= (json.loads(request.body))["bname"]
+                    description=(json.loads(request.body))["desc"]
+                    newBoard=Boards.objects.create(boardName=boardName,description=description,user=user)
+                    return JsonResponse({
+                        "boardId":newBoard.id,
+                        "message":"board created sucessfully"
+                    })
+            except Exception as ex:
+                return JsonResponse({
+                    "massage":str(ex),
+                    "status":"filed"
+                },status = status.HTTP_409_CONFLICT)
+    except Exception as ex:
+        return JsonResponse({
+            "massage":str(ex),
+            "status":"filed"
+        },status = status.HTTP_401_UNAUTHORIZED)
+
+
+
+
+
