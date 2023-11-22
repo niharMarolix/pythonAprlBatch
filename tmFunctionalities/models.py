@@ -20,6 +20,7 @@ class List(models.Model):
 class Card(models.Model):
     cardTitle = models.CharField(max_length=200)
     cardDescription = models.TextField()
-    list = models.ForeignKey(List, on_delete=models.CASCADE)
+    list = models.ForeignKey(List, on_delete=models.CASCADE,null=True)
     board = models.ForeignKey(User, on_delete=models.CASCADE)
+    
     
