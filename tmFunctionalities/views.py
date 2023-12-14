@@ -23,9 +23,9 @@ def register(request):
     
     try:
         data = json.loads(request.body)
-        email = data.get('email')
-        username = data.get('username')
-        password = data.get('password')
+        email = data['email']
+        username = data['username']
+        password = data['password']
         
 
         if not username or not email or not password:
@@ -62,8 +62,8 @@ def login(request):
     
     try:
         data = json.loads(request.body)
-        username = data.get('username')
-        password = data.get('password')
+        username = data['username']
+        password = data['password']
 
         if not username or not password:
             return JsonResponse({
@@ -92,109 +92,124 @@ def login(request):
 @permission_classes([permissions.IsAuthenticated])
 def createBoard(request):
     try:
-        if request.user=="":
-            
-            raise Exception("user is not signed in")
-        else:
-            user=request.user
-            try:
-                boardName= (json.loads(request.body))["bname"]
-                description=(json.loads(request.body))["desc"]
-                if boardName == "" or description =="":
-                    raise Exception("Board name and des not provided check once")
-                checkBoardname = Boards.objects.filter(boardName=boardName).exists()
-                if checkBoardname == True:
-                    raise Exception("Board name alredy added to the database")
-                else:
-                    newBoard=Boards.objects.create(boardName=boardName,description=description,user=user)
-                    return JsonResponse({
-                        "boardId":newBoard.id,
-                        "message":"board created sucessfully"
-                    })
-            except Exception as ex:
-                return JsonResponse({
-                    "massage":str(ex),
-                    "status":"filed"
-                },status = status.HTTP_409_CONFLICT)
-    except Exception as ex:
+        user = request.user
+        data = json.loads(request.body)
+        boardName = data['boardName']
+        description = data['description']
+
+        if not boardName or not description:
+            return JsonResponse({
+                "error": "Board name and description are required."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        new_board = Board.objects.create(boardName=boardName, description=description, user=user)
         return JsonResponse({
-            "massage":str(ex),
-            "status":"filed"
-        },status = status.HTTP_401_UNAUTHORIZED)
-          
+            "boardId": new_board.id,
+            "message": "Board created successfully"
+        }, status=status.HTTP_201_CREATED)
+
+    except json.JSONDecodeError:
+        return JsonResponse({
+            "error": "Invalid JSON in request body."
+        }, status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-def createList(request):
+def createListTitle(request):
     try:
-        if request.user=="":
-            raise Exception("user is not signed in")
-        else:
-            user=request.user
-            try:
-                listtitle= (json.loads(request.body))["Lname"]
-                board_id=(json.loads(request.body))["BoardId"]
-                board_instance = User.objects.get(id=board_id)
-                if listtitle == "" or board_id =="":
-                    raise Exception("Card name and des not provided check once")
-                checkCardname = List.objects.filter(board=board_instance,listTitle=listtitle).exists()
-                if checkCardname == True:
-                    raise Exception("Card alredy added to the database")
-                else:
-                    newList=List.objects.create(listTitle=listtitle,board=board_instance)
-                    return JsonResponse({
-                        "listTitle":newList.listTitle,
-                        "message":"list created sucessfully"
-                    })
-            except Exception as ex:
-                return JsonResponse({
-                    "massage":str(ex),
-                    "status":"filed"
-                },status = status.HTTP_409_CONFLICT)
-    except Exception as ex:
-        return JsonResponse({
-            "massage":str(ex),
-            "status":"filed"
-        },status = status.HTTP_401_UNAUTHORIZED)
+        user = request.user
+        data = json.loads(request.body)
+        listTitle = data['listTitle']
+        cardId = data['cardId']
 
-        
+        card_instance = Card.objects.get(id=cardId)
+
+        if not listTitle or not card_instance:
+            return JsonResponse({
+                "error": "List title and valid card ID are required."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        new_list = List.objects.create(listTitle=listTitle, card=card_instance)
+        return JsonResponse({
+            "listId": new_list.id,
+            "message": "List title created successfully"
+        }, status=status.HTTP_201_CREATED)
+
+    except Card.DoesNotExist:
+        return JsonResponse({
+            "error": "Card does not exist."
+        }, status=status.HTTP_404_NOT_FOUND)
+    except json.JSONDecodeError:
+        return JsonResponse({
+            "error": "Invalid JSON in request body."
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def createCard(request):
     try:
-        if request.user=="":
-            raise Exception("user is not signed in")
-        else:
-            user=request.user
-            try:
-                cardTitle= (json.loads(request.body))["Cname"]
-                cardDescription=(json.loads(request.body))["Desc"]
-                boardId=(json.loads(request.body))['board']
-                board_instance = User.objects.get(id=boardId)
-                if cardTitle == "" :
-                    raise Exception("Card name not provided check once")
-                checkCardname = Card.objects.filter(cardTitle=cardTitle,board=board_instance).exists()
-                if checkCardname == True:
-                    raise Exception("Card alredy added to the database")
-                else:
-                    newCard=Card.objects.create(cardTitle=cardTitle,cardDescription=cardDescription,board=board_instance)
-                    return JsonResponse({
-                        "cardTitle":newCard.cardTitle,
-                        "message":"card created sucessfully"
-                    })
-            except Exception as ex:
-                return JsonResponse({
-                    "massage":str(ex),
-                    "status":"filed"
-                },status = status.HTTP_409_CONFLICT)
-    except Exception as ex:
+        user = request.user
+        data = json.loads(request.body)
+        cardTitle = data['cardTitle']
+        cardDescription = data['cardDescription']
+        boardId = data.get['boardId']
+
+        board_instance = Board.objects.get(id=boardId)
+
+        if not cardTitle or not board_instance:
+            return JsonResponse({
+                "error": "Card title and valid board ID are required."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        new_card = Card.objects.create(cardTitle=cardTitle, cardDescription=cardDescription, board=board_instance)
         return JsonResponse({
-            "massage":str(ex),
-            "status":"filed"
-        },status = status.HTTP_401_UNAUTHORIZED)
-        
-        
+            "cardId": new_card.id,
+            "message": "Card created successfully"
+        }, status=status.HTTP_201_CREATED)
+
+    except Board.DoesNotExist:
+        return JsonResponse({
+            "error": "Board does not exist."
+        }, status=status.HTTP_404_NOT_FOUND)
+    except json.JSONDecodeError:
+        return JsonResponse({
+            "error": "Invalid JSON in request body."
+        }, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def createTask(request):
+    try:
+        user = request.user
+        data = json.loads(request.body)
+        list_id = data['list_id']
+        to_do_task = data['toDoTasks']
 
+        list_instance = List.objects.get(id=list_id)
 
+        if not to_do_task or not list_instance:
+            return JsonResponse({
+                "error": "Task description and valid list ID are required."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        new_task = Task.objects.create(
+            toDoTasks=to_do_task,
+            list=list_instance
+        )
+
+        return JsonResponse({
+            "taskId": new_task.id,
+            "message": "Task created successfully"
+        }, status=status.HTTP_201_CREATED)
+
+    except List.DoesNotExist:
+        return JsonResponse({
+            "error": "List does not exist."
+        }, status=status.HTTP_404_NOT_FOUND)
+    except json.JSONDecodeError:
+        return JsonResponse({
+            "error": "Invalid JSON in request body."
+        }, status=status.HTTP_400_BAD_REQUEST)
 
