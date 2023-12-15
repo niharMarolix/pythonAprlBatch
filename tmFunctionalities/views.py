@@ -26,6 +26,7 @@ def register(request):
         email = data['email']
         username = data['username']
         password = data['password']
+        organisationName=data['organisationName']
         
 
         if not username or not email or not password:
@@ -33,8 +34,12 @@ def register(request):
                 "error": "Input fields should not be empty"
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        user = User.objects.create_user(email=email, username=username, password=password)
-        user.save()
+        if organisationName !="":
+            user = User.objects.create_user(email=email, username=username, password=password,organisationName=organisationName, isAdmin = True)
+            user.save()
+        else:
+            user = User.objects.create_user(email=email, username=username, password=password,organisationName=organisationName, isAdmin = False)
+            user.save()
         
         send_mail(
             "Congratualations",
@@ -213,3 +218,7 @@ def createTask(request):
             "error": "Invalid JSON in request body."
         }, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['PATCH'])
+@permission_classes([permissions.IsAuthenticated])
+def addPersonToOranistation(request):
+    return
