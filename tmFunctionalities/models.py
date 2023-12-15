@@ -5,6 +5,8 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
+    organisationName = models.CharField(max_length = 100, default = '')
+    isAdmin = models.BooleanField(default = False)
 
     def __str__(self):
         return self.username
@@ -21,6 +23,14 @@ class Card(models.Model):
     cardTitle = models.CharField(max_length=200)
     cardDescription = models.TextField()
     board = models.ForeignKey(Board, on_delete=models.CASCADE)
+    isActive = models.BooleanField()
+
+    CARD_STATUS_TYPES = [
+        ('assigned', 'assigned'),
+        ('toDo', 'ToDo'),
+        ('done', 'Done')
+    ]
+    cardStatus = models.CharField(max_length=50,default='' ,choices = CARD_STATUS_TYPES)
 
     def __str__(self):
         return self.cardTitle
@@ -35,6 +45,7 @@ class List(models.Model):
 class Task(models.Model):
     toDoTasks = models.CharField(max_length=200)
     list = models.ForeignKey(List, on_delete=models.CASCADE)
+    isActive = models.BooleanField()
 
     def __str__(self):
         return self.toDoTasks
